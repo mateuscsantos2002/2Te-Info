@@ -190,7 +190,27 @@
             <img src="pic11.jfif" class="card-img-top rounded mb-3" alt="Headset Wireless Spoetry M1" style="width: 100%; height: 250px; object-fit: cover;">
             <h5 class="card-title">Headset Wireless Spoetry M1</h5>
             <p class="card-text text-secondary">Som surround, bateria de longa duração e microfone de qualidade.</p>
+            <p style="color: #00FFFF; font-weight: bold; font-size: 1.1rem;">R$ 89,90</p>
+            <a href="https://wa.me/5561985318105" target="_blank" class="btn btn-buy">Chamar no WhatsApp</a>
+          </div>
+        </div>
+
+        <div class="col-md-4 product-item" data-name="outros">
+          <div class="card product-card text-center p-3">
+            <img src="pic12.jpg" class="card-img-top rounded mb-3" alt="Mousepad" style="width: 100%; height: 250px; object-fit: cover;">
+            <h5 class="card-title">Mousepad Gamer Fallen Spice Candy</h5>
+            <p class="card-text text-secondary">Mousepad grande 450x450mm, Pensado para amantes do esportes, com acabamento robusto e de alta qualidade, esse mousepad possuem resistência à água e costura tripla em bordas infinitas que não desfiam.</p>
             <p style="color: #00FFFF; font-weight: bold; font-size: 1.1rem;">R$ 129,90</p>
+            <a href="https://wa.me/5561985318105" target="_blank" class="btn btn-buy">Chamar no WhatsApp</a>
+          </div>
+        </div>
+
+        <div class="col-md-4 product-item" data-name="headset gamer">
+          <div class="card product-card text-center p-3">
+            <img src="pic13.jpg" class="card-img-top rounded mb-3" alt="Fones" style="width: 100%; height: 250px; object-fit: cover;">
+            <h5 class="card-title">Headset Gamer Kofire GL-06 2.4G</h5>
+            <p class="card-text text-secondary">Fone de ouvido para jogos sem fio Kofire GL-06 com som surround 3D, fones de ouvido para jogos sem fio 2.4G Microfone com cancelamento de ruído ENC, drivers de 50MM, fone de ouvido com bateria 65H.</p>
+            <p style="color: #00FFFF; font-weight: bold; font-size: 1.1rem;">R$ 199,90</p>
             <a href="https://wa.me/5561985318105" target="_blank" class="btn btn-buy">Chamar no WhatsApp</a>
           </div>
         </div>
@@ -222,29 +242,71 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Pesquisa
-    function searchProducts() {
-      const input = document.getElementById('searchInput').value.toLowerCase();
-      const products = document.querySelectorAll('.product-item');
-      products.forEach(product => {
-        const name = product.dataset.name;
-        product.style.display = name.includes(input) ? 'block' : 'none';
-      });
-    }
+  // categoria ativa (padrão: mostrar todos)
+  let currentCategory = 'all';
 
-    // Filtro de categoria
-    function filterCategory(category) {
-      const products = document.querySelectorAll('.product-item');
-      products.forEach(product => {
-        product.style.display = product.dataset.name.includes(category) ? 'block' : 'none';
-      });
-    }
+  // Chamado quando o usuário digita na busca (ou se preferir, mantem onkeyup no input)
+  function searchProducts() {
+    applyFilters();
+  }
 
-    // Mostrar todos
-    function showAllProducts() {
-      const products = document.querySelectorAll('.product-item');
-      products.forEach(product => product.style.display = 'block');
+  // Filtra por categoria (chamado pelos itens do menu)
+  function filterCategory(category) {
+    currentCategory = category;
+    applyFilters();
+  }
+
+  // Mostra todos (usado ao clicar na logo)
+  function showAllProducts() {
+    currentCategory = 'all';
+    // limpa campo de busca, se quiser manter, comente a linha abaixo
+    // document.getElementById('searchInput').value = '';
+    applyFilters();
+  }
+
+  // Função central: aplica categoria + busca ao mesmo tempo
+  function applyFilters() {
+    const input = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+    const products = document.querySelectorAll('.product-item');
+
+    products.forEach(product => {
+      const category = (product.dataset.name || '').toLowerCase();
+      const title = (product.querySelector('.card-title')?.textContent || '').toLowerCase();
+      const description = (product.querySelector('.card-text')?.textContent || '').toLowerCase();
+
+      // tenta achar o preço: elementos com classe product-price / price / p com inline style do seu projeto
+      const priceEl = product.querySelector('.product-price, .price, p[style*="#00FFFF"]');
+      const price = (priceEl?.textContent || '').toLowerCase();
+
+      // corresponde à busca (título, descrição, preço ou categoria)
+      const matchesSearch = input === '' ||
+        title.includes(input) ||
+        description.includes(input) ||
+        price.includes(input) ||
+        category.includes(input);
+
+      // corresponde à categoria selecionada
+      const matchesCategory = (currentCategory === 'all') || category.includes(currentCategory);
+
+      // se ambos verdadeiros -> mostra, senão -> esconde
+      if (matchesSearch && matchesCategory) {
+        product.style.display = ''; // deixa em bloco padrão do bootstrap
+      } else {
+        product.style.display = 'none';
+      }
+    });
+  }
+
+  // Inicializa (garante que tudo esteja visível ao carregar)
+  document.addEventListener('DOMContentLoaded', () => {
+    applyFilters();
+    // Também liga o input ao evento se você preferir não usar onkeyup inline
+    const input = document.getElementById('searchInput');
+    if (input) {
+      input.addEventListener('input', searchProducts);
     }
-  </script>
+  });
+</script>
+
 </body>
 </html>
